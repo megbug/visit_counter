@@ -2,7 +2,12 @@ import { model, Schema } from 'mongoose';
 
 const countSchema = new Schema({
     name: String,
-    count: Number
+    count: Number,
+    clientInfo: {
+        lastUserIP: String,
+        lastVisit: String,
+        lastBrowserAgent: String,
+    }
 });
 
 export const Count = model('Count', countSchema);
