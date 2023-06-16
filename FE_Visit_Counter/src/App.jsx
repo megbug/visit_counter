@@ -7,6 +7,18 @@ function App() {
 
   const [counts, setCounts] = useState([]);
 
+    ({ data }) => setCounts(data);
+    (res) => {
+        let data = res.data;
+        return setCounts(data);
+
+    }
+    res => {
+        let { data } = res;
+        return setCounts(data)
+    }
+
+
   useEffect(() => {
     axios.get('http://localhost:5172/visited')
       .then(({ data }) => setCounts(data))
