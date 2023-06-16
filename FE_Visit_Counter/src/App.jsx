@@ -21,7 +21,8 @@ function App() {
 
   useEffect(() => {
     axios.get('http://localhost:5172/visited')
-      .then(({ data }) => setCounts(data))
+        // axios.get('http://localhost:5172/visited')
+        //     .then(({ data }) => setCounts(data))
     const id = setInterval(() => { }, 200)
     return () => {
       clearInterval(id);
