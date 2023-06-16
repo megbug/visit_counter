@@ -15,40 +15,6 @@ mongoose.connect(process.env.DB)
 // app.get are endpoints of the api 
 
 /*
-1st approach counting visits 
-
-app.get('/visit', (req, res) => {
-    if (res.sendStatus(200)) {
-        return count += 1;
-    }
-})
-*/
-
-/*
-level 2-3 : let count = 0; => how to get this into app.get 
-
-app.get('/visit', async (req, res) => {
-    // get count out of database 
-    let counts = await Count.findOne({ name: 'firstCounter' })
-    if (counts == null) {
-        const startCount = await Count.create({ name: 'firstCounter', count: 1 });
-        res.send(`Visiters: ${startCount.count}`)
-    }
-    else {
-        counts.count += 1;
-        counts.save()
-        res.send(`Visiters: ${counts.count}`)
-    }
-})
-
-app.get('/visited', async (req, res) => {
-    let counts = await Count.findOne({ name: 'firstCounter' })
-    console.log(counts);
-    res.send(`${counts.count}`)
-})
-*/
-
-/*
 level 4
 http://localhost:5172/visit?site=
 */
