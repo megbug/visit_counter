@@ -32,4 +32,4 @@ function App() {
 
 export default App
 
-    * // setInterval verzögert den request um 200 ms, damit nur alle 200 ms refreshed wird in Verbindung mit dependency array 
+// setInterval verzögert den request um 200 ms, damit nur alle 200 ms refreshed wird in Verbindung mit dependency array 
