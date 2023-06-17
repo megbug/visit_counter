@@ -29,28 +29,16 @@ app.get('/visit', async (req, res) => {
     let counts = await Count.findOne({ name: `${site}` });
     //console.log(counts); //logs Obj with : _id, name of site, counted number in case site was used before; else logs: null
 
-    // let timeVisit
-    // let browserAgent
-    // let ipAddresses
-
     if (counts == null) {
         // in case the site requested has no counts yet, we create it in the database
-        // const startCount = await Count.create({ name: `${site}`, count: 1 });
-        // timeVisit = new Date();
-        // browserAgent = req.get('user-agent');
-        // ipAddresses = req.socket.remoteAddress;
-        // console.log(ipAddresses);
-        //console.log(timeVisited.toString());
+
         const startCount = await Count.create({
             name: `${site}`,
             count: 1,
             clientInfo: {
-                // lastUserIP: ipAddresses,
                 lastUserIP: req.socket.remoteAddress,
-                // lastVisit: timeVisit.toString(),
                 lastVisit: new Date().toString(),
                 lastBrowserAgent: req.get('user-agent')
-                // lastBrowserAgent: browserAgent
             }
         });
         res.send(`Visiters: ${startCount.count}`)
@@ -69,25 +57,30 @@ app.get('/visit', async (req, res) => {
     }
 });
 
-app.get('/visited', async (req, res) => {
-    let counts = await Count.find({})
-    //console.log(counts) // logs the array containing the obj from each requested site 
-    res.send(JSON.stringify(counts))
-    // the response we send to the client using the api endpoint (/visited) showing the array stingified
+//http://localhost:5172/visited?site=
+app.get(`/visited`, async (req, res) => {
+    const { site } = req.query;
+
+    let counts = await Count.findOne({ name: `${site}` });
+    // if no specific site requested - show all visited sites 
+    if (!site) {
+        let counts = await Count.find({});
+        res.send(counts);
+        return
+    }
+    // if site requested isn't in database, because it was not visited before - tell the user exactly that
+    if (counts == null) {
+        res.send("I wasn't visted before - maybe check for misspelling");
+        return
+    } else {
+        // if site requested was visited before, show specific information for that site
+        let counts = await Count.findOne({ name: `${site}` });
+        res.send(counts)
+    }
 })
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`)
 });
 
-// console.log((req.get('user-agent'))
-// new date 
-/*
-app.get('/',function(req, res) {
-
-    const ipAddresses = req.header('x-forwarded-for');
-    res.send(ipAddresses);
-
-});
-*/
 
