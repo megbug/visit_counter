@@ -37,7 +37,7 @@ app.get('/visit', async (req, res) => {
             count: 1,
             clientInfo: {
                 lastUserIP: req.socket.remoteAddress,
-                lastVisit: new Date().toString(),
+                lastVisit: new Date().toISOString(),
                 lastBrowserAgent: req.get('user-agent')
             }
         });
@@ -46,12 +46,13 @@ app.get('/visit', async (req, res) => {
     }
     else {
         // in case the site requested already has counts we're adding the new counts and save them to the database 
-        let timeVisit = new Date();
         counts.count += 1;
-        counts.clientInfo.lastUserIP = req.socket.remoteAddress;
-        counts.clientInfo.lastVisit = timeVisit.toString();
-        counts.clientInfo.lastBrowserAgent = req.get('user-agent');
-        counts.save()
+        counts.clientInfo = {
+            lastUserIP: req.socket.remoteAddress,
+            lastVisit: new Date().toISOString(),
+            lastBrowserAgent: req.get('user-agent')
+        };
+        counts.save();
 
         res.send(`Visiters: ${counts.count}`)
     }
@@ -59,16 +60,14 @@ app.get('/visit', async (req, res) => {
 
 //http://localhost:5172/visited?site=
 app.get(`/visited`, async (req, res) => {
-    const { site } = req.query;
+    let counts = await Count.find({});
+    res.send(counts);
+});
 
+app.get('/visited/:site', async (req, res) => {
+    let { site } = req.params;
     let counts = await Count.findOne({ name: `${site}` });
-    // if no specific site requested - show all visited sites 
-    if (!site) {
-        let counts = await Count.find({});
-        res.send(counts);
-        return
-    }
-    // if site requested isn't in database, because it was not visited before - tell the user exactly that
+
     if (counts == null) {
         res.send("I wasn't visted before - maybe check for misspelling");
         return
